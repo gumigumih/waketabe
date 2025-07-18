@@ -1,181 +1,162 @@
-import { useState } from 'react';
-import { Button } from '../atoms/Button';
-import { TextInput } from '../atoms/TextInput';
-import { IconButton } from '../atoms/IconButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { Icon } from '../atoms/Icon';
+import { CalculatorDisplay } from '../molecules/CalculatorDisplay';
+import { CalculatorKeypad } from '../molecules/CalculatorKeypad';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 interface CalculatorProps {
   isOpen: boolean;
   onClose: () => void;
-  initialAmount?: string;
+  onCalculate: (value: string | { amount: string; dishName: string }) => void;
+  initialValue?: string;
   initialDishName?: string;
-  onAmountChange: (amount: string) => void;
-  onDishNameChange?: (dishName: string) => void;
+  dishName?: string;
+  isDetailMode?: boolean;
+  onDishNameChange?: (name: string) => void;
+}
+
+function formatNumber(value: string) {
+  if (!value) return '';
+  return value.replace(/\d+(?=(?:[^\d]*\d)*$)/g, (num) => Number(num).toLocaleString());
+}
+
+function calculateExpression(expr: string): string {
+  try {
+    const sanitized = expr.replace(/,/g, '').replace(/×/g, '*').replace(/÷/g, '/');
+    // eslint-disable-next-line no-eval
+    const result = eval(sanitized);
+    if (isNaN(result) || !isFinite(result)) return '0';
+    return String(Math.round(result));
+  } catch {
+    return '0';
+  }
 }
 
 export const Calculator = ({
   isOpen,
   onClose,
-  initialAmount = '',
+  onCalculate,
+  initialValue = '',
   initialDishName = '',
-  onAmountChange,
+  dishName,
+  isDetailMode,
   onDishNameChange,
 }: CalculatorProps) => {
-  const [display, setDisplay] = useState(initialAmount);
-  const [dishName, setDishName] = useState(initialDishName);
-  const [operation, setOperation] = useState<string | null>(null);
-  const [previousValue, setPreviousValue] = useState<string>('');
+  const [input, setInput] = useState(initialValue || '');
+  const [dishNameInput, setDishNameInput] = useState(initialDishName || '');
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLDivElement>(null);
 
-  if (!isOpen) return null;
-
-  const handleNumberClick = (num: string) => {
-    if (display === '0' && num !== '.') {
-      setDisplay(num);
-    } else if (num === '.' && display.includes('.')) {
-      return;
-    } else {
-      setDisplay(display + num);
+  useEffect(() => {
+    if (isOpen) {
+      setInput(initialValue || '');
+      setDishNameInput(initialDishName || '');
+      setError('');
     }
-  };
+  }, [isOpen, initialValue, initialDishName]);
 
-  const handleOperationClick = (op: string) => {
-    if (display !== '') {
-      setOperation(op);
-      setPreviousValue(display);
-      setDisplay('');
-    }
-  };
-
-  const calculate = () => {
-    if (operation && previousValue && display) {
-      const prev = parseFloat(previousValue);
-      const current = parseFloat(display);
-      let result = 0;
-
-      switch (operation) {
-        case '+':
-          result = prev + current;
-          break;
-        case '-':
-          result = prev - current;
-          break;
-        case '×':
-          result = prev * current;
-          break;
-        case '÷':
-          result = prev / current;
-          break;
-        default:
-          return;
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      if (document.activeElement && (document.activeElement as HTMLElement).tagName === 'INPUT') return;
+      if (e.key >= '0' && e.key <= '9') {
+        handleButtonClick(e.key);
+        e.preventDefault();
+      } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+        handleButtonClick(e.key === '*' ? '×' : e.key === '/' ? '÷' : e.key);
+        e.preventDefault();
+      } else if (e.key === 'Backspace') {
+        handleButtonClick('←');
+        e.preventDefault();
+      } else if (e.key === 'Enter' || e.key === '=') {
+        handleDecide();
+        e.preventDefault();
+      } else if (e.key === 'Escape') {
+        onClose();
+        e.preventDefault();
+      } else if (e.key === 'c' || e.key === 'C') {
+        handleButtonClick('C');
+        e.preventDefault();
       }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, input, dishNameInput]);
 
-      setDisplay(result.toString());
-      setOperation(null);
-      setPreviousValue('');
+  const handleButtonClick = (val: string) => {
+    setError('');
+    if (val === 'C') {
+      setInput('');
+    } else if (val === '←') {
+      setInput((prev) => prev.slice(0, -1));
+    } else if (['+', '-', '×', '÷'].includes(val)) {
+      if (!input || /[+\-×÷]$/.test(input)) return;
+      setInput((prev) => prev + val);
+    } else {
+      setInput((prev) => (prev === '0' ? val : prev + val));
     }
   };
 
-  const clear = () => {
-    setDisplay('');
-    setOperation(null);
-    setPreviousValue('');
+  const handleEqual = () => {
+    if (!input) return;
+    const result = calculateExpression(input);
+    setInput(result);
   };
 
-  const applyAmount = () => {
-    onAmountChange(display);
+  const handleDecide = () => {
+    if (!input) {
+      setError('金額を入力してください');
+      return;
+    }
+    const result = calculateExpression(input);
     if (onDishNameChange) {
-      onDishNameChange(dishName);
+      onCalculate({ amount: result, dishName: dishNameInput });
+    } else {
+      onCalculate(result);
     }
     onClose();
   };
 
-  const numberButtons = [
-    ['7', '8', '9'],
-    ['4', '5', '6'],
-    ['1', '2', '3'],
-    ['0', '.', '=']
-  ];
+  if (!isOpen) return null;
 
-  const operationButtons = ['÷', '×', '-', '+'];
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-80 max-w-[90vw]">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">電卓</h3>
-          <IconButton onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <FontAwesomeIcon icon={faTimes} />
-          </IconButton>
+  const modal = (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+      <div className="bg-white rounded-lg w-full max-w-xs shadow-lg max-h-[80vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <div className="font-bold text-lg text-gray-900">
+            {dishName ? `${dishName}の入力` : '料理入力'}
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <Icon icon={faTimes} className="w-5 h-5" />
+          </button>
         </div>
-
-        {/* 料理名入力フィールド */}
+        {/* Dish name input */}
         {onDishNameChange && (
-          <div className="mb-4">
-            <TextInput
+          <div className="px-4 pt-4">
+            <input
               type="text"
-              placeholder="料理名"
-              value={dishName}
-              onChange={(e) => setDishName(e.target.value)}
-              className="w-full"
+              value={dishNameInput}
+              onChange={e => setDishNameInput(e.target.value)}
+              placeholder="料理名を入力"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-base mb-2"
               autoFocus
             />
           </div>
         )}
-
-        {/* 計算結果表示 */}
-        <div className="mb-4">
-          <div className="bg-gray-100 p-3 rounded text-right text-lg font-mono min-h-[2.5rem] flex items-center justify-end">
-            {display || '0'}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2">
-          {/* 演算子ボタン */}
-          <div className="col-span-1 space-y-2">
-            {operationButtons.map((op) => (
-              <Button
-                key={op}
-                onClick={() => handleOperationClick(op)}
-                className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                {op}
-              </Button>
-            ))}
-          </div>
-
-          {/* 数字ボタン */}
-          <div className="col-span-3 space-y-2">
-            {numberButtons.map((row, rowIndex) => (
-              <div key={rowIndex} className="flex gap-2">
-                {row.map((num) => (
-                  <Button
-                    key={num}
-                    onClick={() => num === '=' ? calculate() : handleNumberClick(num)}
-                    className={`flex-1 h-12 ${
-                      num === '=' 
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white' 
-                        : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-                    }`}
-                  >
-                    {num}
-                  </Button>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* アクションボタン */}
-        <div className="flex gap-2 mt-4">
-          <Button onClick={clear} className="flex-1 bg-red-500 hover:bg-red-600 text-white">
-            クリア
-          </Button>
-          <Button onClick={applyAmount} className="flex-1 bg-green-500 hover:bg-green-600 text-white">
-            適用
-          </Button>
-        </div>
+        {/* Display */}
+        <CalculatorDisplay value={formatNumber(input)} error={error} inputRef={inputRef} />
+        {/* Buttons */}
+        <CalculatorKeypad
+          onButtonClick={handleButtonClick}
+          onEqual={handleEqual}
+          onDecide={handleDecide}
+        />
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }; 

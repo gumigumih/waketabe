@@ -31,12 +31,13 @@ export const DishForm = ({
     setIsCalculatorOpen(false);
   };
 
-  const handleCalculatorAmountChange = (amount: string) => {
-    onDishPriceChange(amount);
-  };
-
-  const handleCalculatorDishNameChange = (name: string) => {
-    onDishNameChange(name);
+  const handleCalculatorResult = (result: string | { amount: string; dishName: string }) => {
+    if (typeof result === 'string') {
+      onDishPriceChange(result);
+    } else {
+      onDishPriceChange(result.amount);
+      onDishNameChange(result.dishName);
+    }
   };
 
   const handleInputClick = () => {
@@ -87,10 +88,10 @@ export const DishForm = ({
       <Calculator
         isOpen={isCalculatorOpen}
         onClose={handleCalculatorClose}
-        initialAmount={dishPrice}
+        onCalculate={handleCalculatorResult}
+        initialValue={dishPrice}
         initialDishName={dishName}
-        onAmountChange={handleCalculatorAmountChange}
-        onDishNameChange={handleCalculatorDishNameChange}
+        onDishNameChange={onDishNameChange}
       />
     </div>
   );
