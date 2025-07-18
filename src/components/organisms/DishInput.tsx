@@ -1,20 +1,8 @@
 import { useState } from 'react';
-import { TextInput } from '../atoms/TextInput';
-import { Checkbox } from '../atoms/Checkbox';
 import { Button } from '../atoms/Button';
 import { DishRow } from '../molecules/DishRow';
-
-interface Participant {
-  id: string;
-  name: string;
-}
-
-interface Dish {
-  id: string;
-  name: string;
-  price: string;
-  eaters: string[]; // 参加者idの配列
-}
+import { DishForm } from '../molecules/DishForm';
+import type { Participant, Dish } from '../../types';
 
 export const DishInput = ({ participants, onComplete }: { participants: Participant[]; onComplete?: (dishes: Dish[]) => void }) => {
   const [dishes, setDishes] = useState<Dish[]>([]);
@@ -76,40 +64,15 @@ export const DishInput = ({ participants, onComplete }: { participants: Particip
             handleAdd();
           }}
         >
-          <div className="flex gap-2 w-full">
-            <TextInput
-              type="text"
-              className="flex-1"
-              placeholder="料理名"
-              value={dishName}
-              onChange={e => setDishName(e.target.value)}
-            />
-            <TextInput
-              type="number"
-              className="w-32"
-              placeholder="金額"
-              value={dishPrice}
-              onChange={e => setDishPrice(e.target.value)}
-              min={0}
-            />
-          </div>
-          <div className="flex flex-wrap gap-4 items-center">
-            {participants.map(p => (
-              <Checkbox
-                key={p.id}
-                checked={selectedEaters.includes(p.id)}
-                onChange={e => {
-                  if (e.target.checked) {
-                    setSelectedEaters([...selectedEaters, p.id]);
-                  } else {
-                    setSelectedEaters(selectedEaters.filter(id => id !== p.id));
-                  }
-                }}
-              >
-                {p.name}
-              </Checkbox>
-            ))}
-          </div>
+          <DishForm
+            dishName={dishName}
+            dishPrice={dishPrice}
+            selectedEaters={selectedEaters}
+            participants={participants}
+            onDishNameChange={setDishName}
+            onDishPriceChange={setDishPrice}
+            onEatersChange={setSelectedEaters}
+          />
           <Button type="submit" className="w-full">
             追加
           </Button>
