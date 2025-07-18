@@ -39,7 +39,7 @@ export const DishForm = ({
     onDishNameChange(name);
   };
 
-  const handlePriceInputClick = () => {
+  const handleInputClick = () => {
     setIsCalculatorOpen(true);
   };
 
@@ -48,10 +48,12 @@ export const DishForm = ({
       <div className="flex gap-2 w-full">
         <TextInput
           type="text"
-          className="flex-1"
+          className="flex-1 cursor-pointer"
           placeholder="料理名"
           value={dishName}
           onChange={e => onDishNameChange(e.target.value)}
+          onClick={handleInputClick}
+          readOnly
         />
         <TextInput
           type="number"
@@ -61,7 +63,7 @@ export const DishForm = ({
           onChange={e => onDishPriceChange(e.target.value)}
           min={0}
           readOnly
-          onClick={handlePriceInputClick}
+          onClick={handleInputClick}
         />
       </div>
       <div className="flex flex-wrap gap-4">
