@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Header } from './components/templates/Header'
 import { Footer } from './components/templates/Footer'
 import { Background } from './components/templates/Background'
@@ -19,12 +19,49 @@ interface Dish {
 }
 
 export const App = () => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    const saved = localStorage.getItem('waketabe-participants');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [dishes, setDishes] = useState<Dish[]>(() => {
+    const saved = localStorage.getItem('waketabe-dishes');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [currentStep, setCurrentStep] = useState<'participants' | 'dishes' | 'result'>(() => {
+    const saved = localStorage.getItem('waketabe-currentStep');
+    return saved ? JSON.parse(saved) : 'participants';
+  });
 
   const handleBackToDishInput = () => {
-    setDishes([]);
+    setCurrentStep('dishes');
   };
+
+  const handleBackToParticipantInput = () => {
+    setCurrentStep('participants');
+  };
+
+  const handleParticipantsComplete = (newParticipants: Participant[]) => {
+    setParticipants(newParticipants);
+    setCurrentStep('dishes');
+  };
+
+  const handleDishesComplete = (newDishes: Dish[]) => {
+    setDishes(newDishes);
+    setCurrentStep('result');
+  };
+
+  // LocalStorageにデータを保存
+  useEffect(() => {
+    localStorage.setItem('waketabe-participants', JSON.stringify(participants));
+  }, [participants]);
+
+  useEffect(() => {
+    localStorage.setItem('waketabe-dishes', JSON.stringify(dishes));
+  }, [dishes]);
+
+  useEffect(() => {
+    localStorage.setItem('waketabe-currentStep', JSON.stringify(currentStep));
+  }, [currentStep]);
 
 
 
@@ -33,10 +70,15 @@ export const App = () => {
   return (
     <Background>
       <Header />
-      {participants.length === 0 ? (
-        <ParticipantInput onComplete={setParticipants} />
-      ) : dishes.length === 0 ? (
-        <DishInput participants={participants} onComplete={setDishes} />
+      {currentStep === 'participants' ? (
+        <ParticipantInput onComplete={handleParticipantsComplete} initialParticipants={participants} />
+      ) : currentStep === 'dishes' ? (
+        <DishInput 
+          participants={participants} 
+          onComplete={handleDishesComplete}
+          onBack={handleBackToParticipantInput}
+          initialDishes={dishes}
+        />
       ) : (
         <CalculationResultScreen
           participants={participants}
