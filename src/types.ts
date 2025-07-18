@@ -34,4 +34,26 @@ export interface Dish {
   name: string;
   price: string;
   eaters: string[];
+}
+
+export interface CalculationResult {
+  participants: ParticipantPayment[];
+  totalAmount: number;
+  averageAmount: number;
+}
+
+export interface ParticipantPayment {
+  participantId: string;
+  participantName: string;
+  totalPaid: number;
+  totalOwed: number;
+  netAmount: number; // 支払うべき金額（負の値）または受け取るべき金額（正の値）
+  dishes: DishContribution[];
+}
+
+export interface DishContribution {
+  dishId: string;
+  dishName: string;
+  dishPrice: number;
+  contribution: number; // この料理で支払うべき金額
 } 
