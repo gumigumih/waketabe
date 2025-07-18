@@ -68,7 +68,7 @@ export const ParticipantInput = ({ onComplete, initialParticipants = [] }: {
       </div>
       {onComplete && (
         <Button
-          className="mt-6 w-full bg-red-500 hover:bg-red-700 font-bold text-lg"
+          className="mt-6 w-full bg-lime-500 hover:bg-lime-700 font-bold text-lg"
           onClick={() => onComplete(participants)}
           disabled={participants.length === 0}
         >
