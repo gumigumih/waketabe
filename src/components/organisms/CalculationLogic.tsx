@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../atoms/Button';
-import { calculatePayments, calculateTransfers, formatCurrency } from '../../domain/calculation';
-import type { Dish, Participant, CalculationResult } from '../../domain/types';
+import { calculatePayments, calculateTransfers, formatCurrency } from '../../domain/usecases';
+import type { Dish, Participant, CalculationResult } from '../../domain/entities';
 
 interface CalculationLogicProps {
   dishes: Dish[];

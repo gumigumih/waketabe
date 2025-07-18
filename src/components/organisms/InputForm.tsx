@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
+import type { Person } from '../../domain/entities';
 import {
   addPerson,
   deletePerson,
@@ -39,7 +40,7 @@ export const InputForm = ({ onShowResult }: InputFormProps) => {
 
   const handleModeChange = () => {
     if (isDetailMode) {
-      const hasMultipleRows = people.some(person => {
+      const hasMultipleRows = people.some((person: Person) => {
         const personForm = document.querySelector(`[data-person-id="${person.id}"]`) as HTMLElement;
         if (personForm) {
           const inputRows = Array.from(personForm.querySelectorAll('input[data-row]')) as HTMLInputElement[];
@@ -88,7 +89,7 @@ export const InputForm = ({ onShowResult }: InputFormProps) => {
       </div>
 
       <div className="space-y-6 bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm">
-        {people.map((person) => (
+        {people.map((person: Person) => (
           <div key={person.id} className="">
             <PersonPaymentForm
               person={person}

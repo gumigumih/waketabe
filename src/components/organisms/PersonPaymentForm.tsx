@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import type { Person } from '../../types';
+import type { Person, PaymentItem } from '../../domain/entities';
 import type { AppDispatch } from '../../store/store';
 import { addPayment, updatePayment, updateSimplePayment } from '../../store/peopleSlice';
 import { PersonNameEditor } from '../molecules/PersonNameEditor';
@@ -58,7 +58,7 @@ export const PersonPaymentForm = ({ person, onDeletePerson, dispatch, isDetailMo
   useEffect(() => {
     if (isDetailMode) {
       // 詳細モードの場合、支払い情報を入力行に反映
-      const newRows = person.payments.map(payment => ({
+      const newRows = person.payments.map((payment: PaymentItem) => ({
         id: payment.id,
         amount: String(payment.amount),
         description: payment.description,
@@ -66,7 +66,7 @@ export const PersonPaymentForm = ({ person, onDeletePerson, dispatch, isDetailMo
       setInputRows(newRows);
     } else {
       // シンプルモードの場合、合計額を反映
-      const total = person.payments.reduce((sum, payment) => sum + payment.amount, 0);
+      const total = person.payments.reduce((sum: number, payment: PaymentItem) => sum + payment.amount, 0);
       setSimpleTotal(String(total));
     }
   }, [person.payments, isDetailMode, person.id]);

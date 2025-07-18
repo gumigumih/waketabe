@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrashAlt, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { DishForm } from './DishForm';
 import { DishDisplay } from './DishDisplay';
-import type { Participant, Dish } from '../../domain/types';
+import type { Participant, Dish } from '../../domain/entities';
 
 interface DishRowProps {
   dish: Dish;

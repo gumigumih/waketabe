@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '../atoms/Button';
 import { DishRow } from '../molecules/DishRow';
 import { DishForm } from '../molecules/DishForm';
-import type { Participant, Dish } from '../../domain/types';
+import type { Participant, Dish } from '../../domain/entities';
 
 export const DishInput = ({ participants, onComplete }: { participants: Participant[]; onComplete?: (dishes: Dish[]) => void }) => {
   const [dishes, setDishes] = useState<Dish[]>([]);
