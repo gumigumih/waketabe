@@ -34,7 +34,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
       ".bg-white-50\\/80"
     ) as HTMLElement;
     if (transferListElement) {
-      transferListElement.classList.add("border-2", "border-sky-500");
+      transferListElement.classList.add("border-2", "border-orange-500");
     }
 
     // 背景を不透明に変更
@@ -72,7 +72,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
 
       // 精算金額のボックスのボーダーを元に戻す
       if (transferListElement) {
-        transferListElement.classList.remove("border-2", "border-sky-500");
+        transferListElement.classList.remove("border-2", "border-orange-500");
       }
 
       // ロゴを非表示に戻す
@@ -174,7 +174,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
                     <span className="mx-2">→</span>
                     <span className="font-medium">{transfer.to}</span>
                   </span>
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-orange-600">
                     {formatCurrency(transfer.amount)}
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
 
         {/* ロゴを配置（デフォルトで非表示） */}
         <div
-          className="mt-4 p-4 flex flex-col items-center bg-sky-500 text-white rounded-lg hidden"
+          className="mt-4 p-4 flex flex-col items-center bg-orange-500 text-white rounded-lg hidden"
           id="result-logo"
         >
           <div className="w-24 flex items-center justify-center">
