@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import type { Person, PaymentItem } from "../../domain/entities";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import html2canvas from "html2canvas-pro";
@@ -32,11 +33,11 @@ export const ResultScreen = ({ onBack }: ResultScreenProps) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   // 合計金額を計算
-  const totalAmount = people.reduce((sum, person) => {
+  const totalAmount = people.reduce((sum: number, person: Person) => {
     return (
       sum +
       person.payments.reduce(
-        (personSum, payment) => personSum + payment.amount,
+        (personSum: number, payment: PaymentItem) => personSum + payment.amount,
         0
       )
     );
@@ -50,15 +51,18 @@ export const ResultScreen = ({ onBack }: ResultScreenProps) => {
 
   // 最大支払金額を計算
   const maxPayment = Math.max(
-    ...people.map((person) =>
-      person.payments.reduce((sum, payment) => sum + payment.amount, 0)
+    ...people.map((person: Person) =>
+      person.payments.reduce(
+        (sum: number, payment: PaymentItem) => sum + payment.amount,
+        0
+      )
     )
   );
 
   // 各人の支払い状況を計算
-  const paymentStatus = people.map((person, index) => {
+  const paymentStatus = people.map((person: Person, index: number) => {
     const paidAmount = person.payments.reduce(
-      (sum, payment) => sum + payment.amount,
+      (sum: number, payment: PaymentItem) => sum + payment.amount,
       0
     );
     const difference = paidAmount - perPersonAmount;

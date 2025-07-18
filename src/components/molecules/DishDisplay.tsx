@@ -1,4 +1,4 @@
-import type { Dish, Participant } from '../../domain/types';
+import type { Dish, Participant } from '../../domain/entities';
 
 interface DishDisplayProps {
   dish: Dish;

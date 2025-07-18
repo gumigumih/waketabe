@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { Person, PaymentItem, PeopleState } from '../types';
+import type { Person, PaymentItem, PeopleState } from '../domain/entities';
 
 const initialState: PeopleState = {
   people: [
@@ -57,16 +57,16 @@ export const peopleSlice = createSlice({
       });
     },
     updatePersonName: (state, action: PayloadAction<{ personId: string; newName: string }>) => {
-      const person = state.people.find(p => p.id === action.payload.personId);
+      const person = state.people.find((p: Person) => p.id === action.payload.personId);
       if (person) {
         person.name = action.payload.newName;
       }
     },
     deletePerson: (state, action: PayloadAction<string>) => {
-      state.people = state.people.filter(p => p.id !== action.payload);
+      state.people = state.people.filter((p: Person) => p.id !== action.payload);
     },
     addPayment: (state, action: PayloadAction<{ personId: string; payment: Omit<PaymentItem, 'id'> }>) => {
-      const person = state.people.find(p => p.id === action.payload.personId);
+      const person = state.people.find((p: Person) => p.id === action.payload.personId);
       if (person) {
         person.payments.push({
           id: crypto.randomUUID(),
@@ -75,18 +75,18 @@ export const peopleSlice = createSlice({
       }
     },
     updatePayment: (state, action: PayloadAction<{ personId: string; paymentId: string; payment: Omit<PaymentItem, 'id'> }>) => {
-      const person = state.people.find(p => p.id === action.payload.personId);
+      const person = state.people.find((p: Person) => p.id === action.payload.personId);
       if (person) {
-        const payment = person.payments.find(p => p.id === action.payload.paymentId);
+        const payment = person.payments.find((p: PaymentItem) => p.id === action.payload.paymentId);
         if (payment) {
           Object.assign(payment, action.payload.payment);
         }
       }
     },
     deletePayment: (state, action: PayloadAction<{ personId: string; paymentId: string }>) => {
-      const person = state.people.find(p => p.id === action.payload.personId);
+      const person = state.people.find((p: Person) => p.id === action.payload.personId);
       if (person) {
-        person.payments = person.payments.filter(p => p.id !== action.payload.paymentId);
+        person.payments = person.payments.filter((p: PaymentItem) => p.id !== action.payload.paymentId);
       }
     },
     setDetailMode: (state, action: PayloadAction<boolean>) => {
@@ -96,7 +96,7 @@ export const peopleSlice = createSlice({
       state.nonPayingParticipants = action.payload;
     },
     updateSimplePayment: (state, action: PayloadAction<{ personId: string; amount: number }>) => {
-      const person = state.people.find(p => p.id === action.payload.personId);
+      const person = state.people.find((p: Person) => p.id === action.payload.personId);
       if (person) {
         // 既存の支払いをクリア
         person.payments = [];

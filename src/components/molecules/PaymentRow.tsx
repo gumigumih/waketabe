@@ -4,12 +4,13 @@ import { Calculator } from '../organisms/Calculator';
 import { useState } from 'react';
 import { TextInput } from '../atoms/TextInput';
 import { IconButton } from '../atoms/IconButton';
+import type { AppDispatch } from '../../store/store';
 
 interface PaymentRowProps {
   row: { id: string; amount: string; description: string };
   index: number;
   personId: string;
-  dispatch: any;
+  dispatch: AppDispatch;
   onAmountChange: (index: number, value: string) => void;
   onDescriptionChange: (index: number, value: string) => void;
   savePayment: (personId: string, paymentId: string, amount: number, description: string) => void;
@@ -61,9 +62,8 @@ export const PaymentRow = ({
           onClose={() => setIsCalculatorOpen(false)}
           onCalculate={handleCalculatorResult}
           initialValue={row.amount}
-          initialDescription={row.description}
-          personName={personName}
-          isDetailMode={true}
+          initialDishName={row.description}
+          dishName={personName}
         />
       </div>
       <div className="relative flex-1 min-w-0">

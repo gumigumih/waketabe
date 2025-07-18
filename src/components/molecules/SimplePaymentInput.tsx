@@ -46,8 +46,7 @@ export const SimplePaymentInput = ({
         onClose={() => setIsCalculatorOpen(false)}
         onCalculate={handleCalculatorResult}
         initialValue={value}
-        personName={personName}
-        isDetailMode={false}
+        dishName={personName}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '../atoms/Button';
 import { TextInput } from '../atoms/TextInput';
 import { PersonNameEditor } from '../molecules/PersonNameEditor';
-import type { Participant } from '../../domain/types';
+import type { Participant } from '../../domain/entities';
 
 export const ParticipantInput = ({ onComplete }: { onComplete?: (participants: Participant[]) => void }) => {
   const [participants, setParticipants] = useState<Participant[]>([]);

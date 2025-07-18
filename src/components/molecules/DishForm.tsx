@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TextInput } from '../atoms/TextInput';
 import { Checkbox } from '../atoms/Checkbox';
 import { Calculator } from '../organisms/Calculator';
-import type { Participant } from '../../domain/types';
+import type { Participant } from '../../domain/entities';
 
 interface DishFormProps {
   dishName: string;
@@ -31,12 +31,12 @@ export const DishForm = ({
     setIsCalculatorOpen(false);
   };
 
-  const handleCalculatorResult = (result: string | { amount: string; dishName: string }) => {
+  const handleCalculatorResult = (result: string | { amount: string; description: string }) => {
     if (typeof result === 'string') {
       onDishPriceChange(result);
     } else {
       onDishPriceChange(result.amount);
-      onDishNameChange(result.dishName);
+      onDishNameChange(result.description);
     }
   };
 

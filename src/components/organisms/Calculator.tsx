@@ -8,11 +8,10 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 interface CalculatorProps {
   isOpen: boolean;
   onClose: () => void;
-  onCalculate: (value: string | { amount: string; dishName: string }) => void;
+  onCalculate: (value: string | { amount: string; description: string }) => void;
   initialValue?: string;
   initialDishName?: string;
   dishName?: string;
-  isDetailMode?: boolean;
   onDishNameChange?: (name: string) => void;
 }
 
@@ -40,7 +39,6 @@ export const Calculator = ({
   initialValue = '',
   initialDishName = '',
   dishName,
-  isDetailMode,
   onDishNameChange,
 }: CalculatorProps) => {
   const [input, setInput] = useState(initialValue || '');
@@ -112,7 +110,7 @@ export const Calculator = ({
     }
     const result = calculateExpression(input);
     if (onDishNameChange) {
-      onCalculate({ amount: result, dishName: dishNameInput });
+      onCalculate({ amount: result, description: dishNameInput });
     } else {
       onCalculate(result);
     }
