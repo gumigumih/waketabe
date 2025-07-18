@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import html2canvas from "html2canvas-pro";
-import waketabeLogo from "../../assets/logo-white.svg";
+import waketabeLogoSrc from "../../assets/logo-white.svg";
 import type { Dish, Participant, DishContribution } from "../../domain/entities";
 import { calculatePayments, calculateTransfers } from "../../domain/usecases";
 import { formatCurrency } from "../../domain/usecases/formatCurrency";
@@ -45,7 +45,11 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
     try {
       const canvas = await html2canvas(resultRef.current, {
         backgroundColor: "#ffffff",
-        scale: 2, // より高品質な画像を生成
+        scale: 2, // 高品質な画像を生成
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        imageTimeout: 0,
       });
       const image = canvas.toDataURL("image/png");
 
@@ -179,17 +183,18 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
 
         {/* ロゴを配置（デフォルトで非表示） */}
         <div
-          className="mt-4 p-4 flex flex-col items-center bg-orange-500 text-white rounded-lg hidden"
+          className="mt-6 p-6 flex flex-col items-center bg-orange-500 text-white rounded-lg hidden"
           id="result-logo"
         >
-          <div className="w-24 flex items-center justify-center">
+          <div className="w-48 h-12 flex items-center justify-center mb-2">
             <img
-              src={waketabeLogo}
+              src={waketabeLogoSrc}
               alt="わけたべ"
               className="w-full h-full object-contain"
+              style={{ maxWidth: '100%', maxHeight: '100%' }}
             />
           </div>
-          <p className="mt-1 text-center text-sm">
+          <p className="text-center text-sm font-medium">
             https://waketabe.meggumi.com
           </p>
         </div>
