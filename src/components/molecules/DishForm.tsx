@@ -1,10 +1,5 @@
-import { useState } from 'react';
 import { TextInput } from '../atoms/TextInput';
 import { Checkbox } from '../atoms/Checkbox';
-import { Button } from '../atoms/Button';
-import { Calculator } from '../organisms/Calculator';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import type { Participant } from '../../types';
 
 interface DishFormProps {
@@ -28,20 +23,6 @@ export const DishForm = ({
   onEatersChange,
   className = '',
 }: DishFormProps) => {
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-
-  const handleCalculatorClose = () => {
-    setIsCalculatorOpen(false);
-  };
-
-  const handleCalculatorAmountChange = (amount: string) => {
-    onDishPriceChange(amount);
-  };
-
-  const handleCalculatorDishNameChange = (name: string) => {
-    onDishNameChange(name);
-  };
-
   return (
     <div className={`space-y-2 ${className}`}>
       <div className="flex gap-2 w-full">
@@ -52,24 +33,14 @@ export const DishForm = ({
           value={dishName}
           onChange={e => onDishNameChange(e.target.value)}
         />
-        <div className="flex gap-2 w-32">
-          <TextInput
-            type="number"
-            className="flex-1"
-            placeholder="金額"
-            value={dishPrice}
-            onChange={e => onDishPriceChange(e.target.value)}
-            min={0}
-            readOnly
-          />
-          <Button
-            onClick={() => setIsCalculatorOpen(true)}
-            className="px-3 bg-blue-500 hover:bg-blue-600 text-white"
-            title="電卓を開く"
-          >
-            <FontAwesomeIcon icon={faCalculator} />
-          </Button>
-        </div>
+        <TextInput
+          type="number"
+          className="w-32"
+          placeholder="金額"
+          value={dishPrice}
+          onChange={e => onDishPriceChange(e.target.value)}
+          min={0}
+        />
       </div>
       <div className="flex flex-wrap gap-4">
         {participants.map(p => (
@@ -88,15 +59,6 @@ export const DishForm = ({
           </Checkbox>
         ))}
       </div>
-
-      <Calculator
-        isOpen={isCalculatorOpen}
-        onClose={handleCalculatorClose}
-        initialAmount={dishPrice}
-        initialDishName={dishName}
-        onAmountChange={handleCalculatorAmountChange}
-        onDishNameChange={handleCalculatorDishNameChange}
-      />
     </div>
   );
 }; 
