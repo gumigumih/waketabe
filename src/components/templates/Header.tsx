@@ -6,7 +6,7 @@ export const Header = () => {
       <div className="flex justify-center mb-4">
         <img src={waketabeSvg} alt="わけたべ" className="w-1/2" />
       </div>
-      <p className="text-sm text-gray-50 text-center">
+      <p className="text-sm text-gray-50 text-center mb-8">
         いろんな料理をみんなで分け合って食べた時の
         <br />
         「食べた分だけ割り勘」を簡単に計算できるアプリです
