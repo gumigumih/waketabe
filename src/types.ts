@@ -27,4 +27,11 @@ export interface PeopleState {
   people: Person[];
   isDetailMode: boolean;
   nonPayingParticipants: number;
+}
+
+export interface Dish {
+  id: string;
+  name: string;
+  price: string;
+  eaters: string[];
 } 
