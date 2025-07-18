@@ -39,15 +39,12 @@ export const calculatePayments = (
     });
   });
 
-  const averageAmount = participants.length > 0 ? totalAmount / participants.length : 0;
-
   participantPayments.forEach(payment => {
     payment.netAmount = payment.totalPaid - payment.totalOwed;
   });
 
   return {
     participants: participantPayments,
-    totalAmount,
-    averageAmount
+    totalAmount
   };
 }; 

@@ -5,6 +5,6 @@ export interface ParticipantPayment {
   participantName: string;
   totalPaid: number;
   totalOwed: number;
-  netAmount: number; // 支払うべき金額（負の値）または受け取るべき金額（正の値）
+  netAmount: number;
   dishes: DishContribution[];
 } 

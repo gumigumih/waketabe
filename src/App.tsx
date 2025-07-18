@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import { InputForm } from './components/organisms/InputForm'
-import { ResultScreen } from './components/templates/ResultScreen'
+import { useState, useEffect } from 'react'
 import { Header } from './components/templates/Header'
 import { Footer } from './components/templates/Footer'
 import { Background } from './components/templates/Background'
 import { ParticipantInput } from './components/organisms/ParticipantInput'
 import { DishInput } from './components/organisms/DishInput'
+import { CalculationResultScreen } from './components/organisms/CalculationResult'
 
 interface Participant {
   id: string;
@@ -20,51 +19,71 @@ interface Dish {
 }
 
 export const App = () => {
-  const [showResult, setShowResult] = useState(false);
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    const saved = localStorage.getItem('waketabe-participants');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [dishes, setDishes] = useState<Dish[]>(() => {
+    const saved = localStorage.getItem('waketabe-dishes');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [currentStep, setCurrentStep] = useState<'participants' | 'dishes' | 'result'>(() => {
+    const saved = localStorage.getItem('waketabe-currentStep');
+    return saved ? JSON.parse(saved) : 'participants';
+  });
 
-  const handleShowResult = () => {
-    setShowResult(true);
+  const handleBackToDishInput = () => {
+    setCurrentStep('dishes');
   };
 
-  const handleBack = () => {
-    setShowResult(false);
+  const handleBackToParticipantInput = () => {
+    setCurrentStep('participants');
   };
 
-  // 参加者登録が終わっていなければParticipantInputを表示
-  if (participants.length === 0) {
-    return (
-      <Background>
-        <Header />
-        <ParticipantInput onComplete={setParticipants} />
-        <Footer />
-      </Background>
-    );
-  }
+  const handleParticipantsComplete = (newParticipants: Participant[]) => {
+    setParticipants(newParticipants);
+    setCurrentStep('dishes');
+  };
 
-  // 料理入力が終わっていなければDishInputを表示
-  if (dishes.length === 0) {
-    return (
-      <Background>
-        <Header />
-        <DishInput participants={participants} onComplete={setDishes} />
-        <Footer />
-      </Background>
-    );
-  }
+  const handleDishesComplete = (newDishes: Dish[]) => {
+    setDishes(newDishes);
+    setCurrentStep('result');
+  };
+
+  // LocalStorageにデータを保存
+  useEffect(() => {
+    localStorage.setItem('waketabe-participants', JSON.stringify(participants));
+  }, [participants]);
+
+  useEffect(() => {
+    localStorage.setItem('waketabe-dishes', JSON.stringify(dishes));
+  }, [dishes]);
+
+  useEffect(() => {
+    localStorage.setItem('waketabe-currentStep', JSON.stringify(currentStep));
+  }, [currentStep]);
+
+
+
+
 
   return (
     <Background>
       <Header />
-      {showResult ? (
-        <ResultScreen
-          onBack={handleBack}
+      {currentStep === 'participants' ? (
+        <ParticipantInput onComplete={handleParticipantsComplete} initialParticipants={participants} />
+      ) : currentStep === 'dishes' ? (
+        <DishInput 
+          participants={participants} 
+          onComplete={handleDishesComplete}
+          onBack={handleBackToParticipantInput}
+          initialDishes={dishes}
         />
       ) : (
-        // 今後ここを計算結果画面などに差し替え予定
-        <InputForm
-          onShowResult={handleShowResult}
+        <CalculationResultScreen
+          participants={participants}
+          dishes={dishes}
+          onBack={handleBackToDishInput}
         />
       )}
       <Footer />

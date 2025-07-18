@@ -4,8 +4,11 @@ import { TextInput } from '../atoms/TextInput';
 import { PersonNameEditor } from '../molecules/PersonNameEditor';
 import type { Participant } from '../../domain/entities';
 
-export const ParticipantInput = ({ onComplete }: { onComplete?: (participants: Participant[]) => void }) => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
+export const ParticipantInput = ({ onComplete, initialParticipants = [] }: { 
+  onComplete?: (participants: Participant[]) => void;
+  initialParticipants?: Participant[];
+}) => {
+  const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
   const [inputName, setInputName] = useState('');
 
   const handleAdd = () => {
