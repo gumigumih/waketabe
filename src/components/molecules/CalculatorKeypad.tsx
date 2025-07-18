@@ -18,7 +18,7 @@ export const CalculatorKeypad = ({ onButtonClick, onEqual, onDecide }: Calculato
     {BUTTONS.flat().map((btn, i) => (
       <Button
         key={btn + i}
-        className="py-3 bg-gray-100 hover:bg-blue-100 text-lg font-bold text-gray-800"
+        className="!bg-gray-100 !text-gray-800 hover:!bg-blue-100 py-3 text-lg font-bold"
         onClick={() => onButtonClick(btn)}
         tabIndex={0}
       >
@@ -26,13 +26,13 @@ export const CalculatorKeypad = ({ onButtonClick, onEqual, onDecide }: Calculato
       </Button>
     ))}
     <Button
-      className="col-span-2 py-3 bg-blue-500 hover:bg-blue-600 text-white text-lg font-bold"
+      className="!bg-blue-500 hover:!bg-blue-600 col-span-2 py-3 text-lg font-bold"
       onClick={onEqual}
     >
       =
     </Button>
     <Button
-      className="col-span-2 py-3 bg-lime-500 hover:bg-lime-600 text-white text-lg font-bold"
+      className="!bg-lime-500 hover:!bg-lime-600 col-span-2 py-3 text-lg font-bold"
       onClick={onDecide}
     >
       決定
