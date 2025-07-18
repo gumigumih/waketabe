@@ -14,7 +14,6 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-
     "@tailwindcss/vite": "^4.1.7",
     "@types/cleave.js": "^1.4.12",
     "cleave.js": "^1.6.0",
@@ -22,7 +21,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-number-format": "^5.4.4",
-
+    "react-router-dom": "^6.30.1",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {

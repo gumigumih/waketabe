@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faArrowLeft, faShareAlt } from "@fortawesome/free-solid-svg-icons";
 import waketabeLogoSrc from "../../assets/logo-white.png";
 import type { Dish, Participant, DishContribution } from "../../domain/entities";
 import { calculatePayments, calculateTransfers } from "../../domain/usecases";
@@ -15,6 +15,7 @@ interface CalculationResultScreenProps {
 
 export const CalculationResultScreen = ({ participants, dishes, onBack }: CalculationResultScreenProps) => {
   const resultRef = useRef<HTMLDivElement>(null);
+  const [shareMsg, setShareMsg] = useState('');
 
   // 計算結果を取得
   const calculationResult = calculatePayments(dishes, participants);
@@ -77,6 +78,44 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
         logoElement.classList.add("hidden");
       }
     }
+  };
+
+  // スマホ判定
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isWebShareSupported = isMobile && typeof navigator !== 'undefined' && !!navigator.share;
+
+  // シェア/コピー処理
+  const handleShareUrl = async () => {
+    // データをエンコード
+    const shareData = {
+      participants,
+      dishes,
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+    const url = `${window.location.origin}/result?data=${encoded}`;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isWebShareSupported = isMobile && typeof navigator !== 'undefined' && !!navigator.share;
+
+    if (isWebShareSupported) {
+      try {
+        await navigator.share({
+          title: 'わけたべ 計算結果',
+          url,
+        });
+        setShareMsg('シェアしました！');
+      } catch {
+        setShareMsg('シェアをキャンセルしました');
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareMsg('URLをコピーしました！');
+        alert('URLをコピーしました！');
+      } catch {
+        setShareMsg('コピーに失敗しました');
+      }
+    }
+    setTimeout(() => setShareMsg(''), 2000);
   };
 
   return (
@@ -193,7 +232,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col gap-2 justify-center items-center">
         <button
           onClick={handleDownloadImage}
           className="w-full px-8 py-4 bg-lime-500 text-white rounded-md hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 font-bold text-lg"
@@ -201,6 +240,14 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
           <FontAwesomeIcon icon={faDownload} className="mr-2" />
           画像保存
         </button>
+        <button
+          onClick={handleShareUrl}
+          className="w-full px-8 py-4 bg-orange-500 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 font-bold text-lg"
+        >
+          <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
+          {isWebShareSupported ? 'シェア' : 'URLコピー'}
+        </button>
+        {shareMsg && <div className="text-center text-green-600 font-semibold mt-2">{shareMsg}</div>}
       </div>
     </div>
   );

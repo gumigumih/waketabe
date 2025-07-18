@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Header } from './components/templates/Header'
 import { Footer } from './components/templates/Footer'
 import { Background } from './components/templates/Background'
@@ -18,77 +19,96 @@ interface Dish {
   eaters: string[];
 }
 
-export const App = () => {
-  const [participants, setParticipants] = useState<Participant[]>(() => {
-    const saved = localStorage.getItem('waketabe-participants');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [dishes, setDishes] = useState<Dish[]>(() => {
-    const saved = localStorage.getItem('waketabe-dishes');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [currentStep, setCurrentStep] = useState<'participants' | 'dishes' | 'result'>(() => {
-    const saved = localStorage.getItem('waketabe-currentStep');
-    return saved ? JSON.parse(saved) : 'participants';
-  });
+const AppRoutes = () => {
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [restoring, setRestoring] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleBackToDishInput = () => {
-    setCurrentStep('dishes');
-  };
+  // クエリパラメータからデータ復元
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const dataParam = params.get('data');
+    if (dataParam) {
+      setRestoring(true);
+      try {
+        const decoded = decodeURIComponent(atob(dataParam));
+        const parsed = JSON.parse(decoded);
+        if (parsed.participants && Array.isArray(parsed.participants)) {
+          setParticipants(parsed.participants);
+        }
+        if (parsed.dishes && Array.isArray(parsed.dishes)) {
+          setDishes(parsed.dishes);
+        }
+      } catch (e) {
+        // 無効なデータの場合は何もしない
+      }
+      setTimeout(() => setRestoring(false), 0); // 次のtickで解除
+    }
+  }, [location.search]);
 
-  const handleBackToParticipantInput = () => {
-    setCurrentStep('participants');
-  };
-
+  // 参加者入力完了→料理入力へ
   const handleParticipantsComplete = (newParticipants: Participant[]) => {
     setParticipants(newParticipants);
-    setCurrentStep('dishes');
+    navigate('/dishes');
   };
 
+  // 料理入力完了→結果画面へ
   const handleDishesComplete = (newDishes: Dish[]) => {
     setDishes(newDishes);
-    setCurrentStep('result');
+    navigate('/result');
   };
 
-  // LocalStorageにデータを保存
-  useEffect(() => {
-    localStorage.setItem('waketabe-participants', JSON.stringify(participants));
-  }, [participants]);
+  // 戻る（料理→参加者）
+  const handleBackToParticipantInput = () => {
+    navigate('/participants');
+  };
 
-  useEffect(() => {
-    localStorage.setItem('waketabe-dishes', JSON.stringify(dishes));
-  }, [dishes]);
-
-  useEffect(() => {
-    localStorage.setItem('waketabe-currentStep', JSON.stringify(currentStep));
-  }, [currentStep]);
-
-
-
-
+  // 戻る（結果→料理）
+  const handleBackToDishInput = () => {
+    navigate('/dishes');
+  };
 
   return (
     <Background>
       <Header />
-      {currentStep === 'participants' ? (
-        <ParticipantInput onComplete={handleParticipantsComplete} initialParticipants={participants} />
-      ) : currentStep === 'dishes' ? (
-        <DishInput 
-          participants={participants} 
-          onComplete={handleDishesComplete}
-          onBack={handleBackToParticipantInput}
-          initialDishes={dishes}
-        />
+      {restoring ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] text-lg text-gray-600">データ復元中...</div>
       ) : (
-        <CalculationResultScreen
-          participants={participants}
-          dishes={dishes}
-          onBack={handleBackToDishInput}
-        />
+        <Routes>
+          <Route path="/participants" element={
+            <ParticipantInput onComplete={handleParticipantsComplete} initialParticipants={participants} />
+          } />
+          <Route path="/dishes" element={
+            participants.length === 0 && !location.search.includes('data=') ? <Navigate to="/participants" /> :
+            <DishInput 
+              participants={participants} 
+              onComplete={handleDishesComplete}
+              onBack={handleBackToParticipantInput}
+              initialDishes={dishes}
+            />
+          } />
+          <Route path="/result" element={
+            (participants.length === 0 || dishes.length === 0) && !location.search.includes('data=') ? <Navigate to="/participants" /> :
+            <CalculationResultScreen
+              participants={participants}
+              dishes={dishes}
+              onBack={handleBackToDishInput}
+            />
+          } />
+          <Route path="*" element={<Navigate to="/participants" />} />
+        </Routes>
       )}
       <Footer />
     </Background>
-  )
-}
+  );
+};
 
-export default App
+export const App = () => (
+  <BrowserRouter>
+    <AppRoutes />
+  </BrowserRouter>
+);
+
+export default App;

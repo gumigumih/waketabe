@@ -10,6 +10,37 @@ export const Footer = () => {
     <>
       <footer className="mt-8 pt-4 border-t border-white/20">
         <div className="flex flex-col items-center space-y-3 text-white/80 text-sm">
+          {/* Sister App Section（最上部） */}
+          <div className="pt-2 w-full max-w-md mx-auto">
+            <div className="text-center text-xs text-white/60 mb-2 tracking-widest">
+              姉妹アプリ
+            </div>
+            <div className="flex justify-center">
+              <a
+                href="https://warimaru.meggumi.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white/80 border border-gray-200 hover:bg-white transition-colors shadow-sm w-full max-w-xs"
+                title="わりまる"
+              >
+                <img
+                  src="https://warimaru.meggumi.com/ogp.png"
+                  alt="わりまるOGP"
+                  className="h-10 w-auto rounded-md object-cover flex-shrink-0"
+                  style={{ aspectRatio: "16/9", minWidth: 56 }}
+                />
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold text-gray-900 leading-tight truncate">
+                    わりまる
+                  </span>
+                  <span className="text-xs text-gray-600 leading-tight truncate">
+                    飲み会・旅行の割り勘アプリ
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+
           {/* GitHub & Links */}
           <div className="flex justify-center items-center space-x-4">
             <a
