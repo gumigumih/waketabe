@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import html2canvas from "html2canvas-pro";
-import waketabeLogoSrc from "../../assets/logo-white.svg";
+import waketabeLogoSrc from "../../assets/logo-white.png";
 import type { Dish, Participant, DishContribution } from "../../domain/entities";
 import { calculatePayments, calculateTransfers } from "../../domain/usecases";
 import { formatCurrency } from "../../domain/usecases/formatCurrency";
+import { captureElementToImage } from "../../infrastructure/html2canvas";
 
 interface CalculationResultScreenProps {
   participants: Participant[];
@@ -43,14 +43,7 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
     resultElement.style.background = "white";
 
     try {
-      const canvas = await html2canvas(resultRef.current, {
-        backgroundColor: "#ffffff",
-        scale: 2, // 高品質な画像を生成
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        imageTimeout: 0,
-      });
+      const canvas = await captureElementToImage(resultRef.current);
       const image = canvas.toDataURL("image/png");
 
       // タイムスタンプを生成
