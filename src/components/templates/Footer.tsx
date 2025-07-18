@@ -1,7 +1,7 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { useState } from 'react';
-import { PrivacyModal } from './PrivacyModal';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { useState } from "react";
+import { PrivacyModal } from "./PrivacyModal";
 
 export const Footer = () => {
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
@@ -43,7 +43,12 @@ export const Footer = () => {
 
           {/* Version & License */}
           <div className="flex justify-center items-center space-x-4">
-            <span>v1.1.0</span>
+            <span>
+              v
+              {typeof __APP_VERSION__ !== "undefined"
+                ? __APP_VERSION__
+                : "1.0.0"}
+            </span>
             <span>•</span>
             <a
               href="https://github.com/gumigumih/waketabe/blob/main/LICENSE"
@@ -63,10 +68,10 @@ export const Footer = () => {
         </div>
       </footer>
 
-      <PrivacyModal 
-        isOpen={isPrivacyModalOpen} 
-        onClose={() => setIsPrivacyModalOpen(false)} 
+      <PrivacyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
       />
     </>
   );
-}; 
+};
