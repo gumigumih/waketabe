@@ -93,7 +93,7 @@ export const DishInput = ({ participants, onComplete }: { participants: Particip
               min={0}
             />
           </div>
-          <div className="flex flex-wrap gap-1 items-center">
+          <div className="flex flex-wrap gap-4 items-center">
             {participants.map(p => (
               <Checkbox
                 key={p.id}
