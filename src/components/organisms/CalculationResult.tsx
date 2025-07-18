@@ -110,12 +110,6 @@ export const CalculationResultScreen = ({ participants, dishes, onBack }: Calcul
             <span className="text-gray-600">参加者数</span>
             <span className="text-lg font-bold">{participants.length}人</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">1人あたり</span>
-            <span className="text-lg font-bold">
-              {formatCurrency(calculationResult.averageAmount)}
-            </span>
-          </div>
         </div>
 
         {/* 参加者別の支払い状況 */}
