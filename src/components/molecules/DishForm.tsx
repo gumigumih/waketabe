@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TextInput } from '../atoms/TextInput';
 import { Checkbox } from '../atoms/Checkbox';
 import { Calculator } from '../organisms/Calculator';
-import type { Participant } from '../../types';
+import type { Participant } from '../../domain/types';
 
 interface DishFormProps {
   dishName: string;
