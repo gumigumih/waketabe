@@ -18,7 +18,7 @@ export const CalculatorKeypad = ({ onButtonClick, onEqual, onDecide }: Calculato
     {BUTTONS.flat().map((btn, i) => (
       <Button
         key={btn + i}
-        className="py-3 bg-gray-100 hover:bg-blue-100 text-lg font-bold"
+        className="py-3 bg-gray-100 hover:bg-blue-100 text-lg font-bold text-gray-800"
         onClick={() => onButtonClick(btn)}
         tabIndex={0}
       >
