@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Header } from './components/templates/Header'
 import { Footer } from './components/templates/Footer'
 import { Background } from './components/templates/Background'
@@ -41,7 +41,7 @@ const AppRoutes = () => {
         if (parsed.dishes && Array.isArray(parsed.dishes)) {
           setDishes(parsed.dishes);
         }
-      } catch (e) {
+      } catch {
         // 無効なデータの場合は何もしない
       }
       setTimeout(() => setRestoring(false), 0); // 次のtickで解除
@@ -106,9 +106,9 @@ const AppRoutes = () => {
 };
 
 export const App = () => (
-  <BrowserRouter>
+  <HashRouter>
     <AppRoutes />
-  </BrowserRouter>
+  </HashRouter>
 );
 
-export default App;
+export default App; 
