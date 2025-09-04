@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { TextInput } from '../atoms/TextInput';
-import { IconButton } from '../atoms/IconButton';
 
 interface PersonNameEditorProps {
   personId: string;
@@ -37,27 +36,27 @@ export const PersonNameEditor = ({ personId, name, onUpdateName, onDeletePerson 
           className="flex-1 text-lg font-medium text-gray-900"
           autoFocus
         />
-        <IconButton
+        <button
           onClick={() => {
             const newName = editedName.endsWith('さん') ? editedName : `${editedName}さん`;
             if (onUpdateName) { onUpdateName(personId, newName); }
             setIsEditing(false);
           }}
-          className="text-blue-600 hover:text-blue-700"
+          className="text-blue-600 hover:text-blue-700 p-2"
           title="保存"
         >
           <FontAwesomeIcon icon={faCheck} />
-        </IconButton>
-        <IconButton
+        </button>
+        <button
           onClick={() => {
             setIsEditing(false);
             setEditedName(name);
           }}
-          className="text-gray-600 hover:text-gray-700"
+          className="text-gray-600 hover:text-gray-700 p-2"
           title="キャンセル"
         >
           <FontAwesomeIcon icon={faTimes} />
-        </IconButton>
+        </button>
       </div>
     );
   }
@@ -65,24 +64,24 @@ export const PersonNameEditor = ({ personId, name, onUpdateName, onDeletePerson 
   return (
     <div className="flex items-center gap-2 w-full">
       <h3 className="flex-1 text-lg font-bold text-gray-900">{name}</h3>
-      <IconButton
+      <button
         onClick={() => setIsEditing(true)}
-        className="text-gray-400 hover:text-gray-500"
+        className="text-gray-400 hover:text-gray-500 p-2"
         title="編集"
       >
         <FontAwesomeIcon icon={faPen} />
-      </IconButton>
-      <IconButton
+      </button>
+      <button
         onClick={() => {
           if (window.confirm('この参加者を削除してもよろしいですか？')) {
             onDeletePerson(personId);
           }
         }}
-        className="ml-auto text-gray-400 hover:text-red-500 transition-colors"
+        className="ml-auto text-gray-400 hover:text-red-500 transition-colors p-2"
         title="人物を削除"
       >
         <FontAwesomeIcon icon={faTrashAlt} />
-      </IconButton>
+      </button>
     </div>
   );
 }; 

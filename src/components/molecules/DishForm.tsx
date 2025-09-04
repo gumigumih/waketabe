@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { TextInput } from '../atoms/TextInput';
 import { Checkbox } from '../atoms/Checkbox';
-import { Calculator } from '../organisms/Calculator';
+import { CalculatorInputForm } from '@gumigumih/react-calculator-input-form';
 import type { Participant } from '../../domain/entities';
 
 interface DishFormProps {
@@ -25,74 +24,52 @@ export const DishForm = ({
   onEatersChange,
   className = '',
 }: DishFormProps) => {
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-
-  const handleCalculatorClose = () => {
-    setIsCalculatorOpen(false);
-  };
-
-  const handleCalculatorResult = (result: string | { amount: string; description: string }) => {
-    if (typeof result === 'string') {
-      onDishPriceChange(result);
-    } else {
-      onDishPriceChange(result.amount);
-      onDishNameChange(result.description);
-    }
-  };
-
-  const handleInputClick = () => {
-    setIsCalculatorOpen(true);
-  };
-
   return (
     <div className={`space-y-2 ${className}`}>
       <div className="flex gap-2 w-full">
         <TextInput
           type="text"
-          className="flex-1 cursor-pointer"
+          className="flex-1"
           placeholder="料理名"
           value={dishName}
           onChange={e => onDishNameChange(e.target.value)}
-          onClick={handleInputClick}
-          readOnly
         />
-        <TextInput
-          type="number"
-          className="w-32 cursor-pointer"
-          placeholder="金額"
+        <CalculatorInputForm
           value={dishPrice}
-          onChange={e => onDishPriceChange(e.target.value)}
-          min={0}
-          readOnly
-          onClick={handleInputClick}
+          onChange={onDishPriceChange}
+          title={dishName ? `${dishName}の金額を入力` : '料理の金額を入力'}
+          className="w-32 cursor-pointer bg-white rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+          placeholder="金額"
+          enableTaxCalculation={true}
+          decimalPlaces={0}
+          numberFormatOptions={{
+            prefix: "¥",
+            thousandSeparator: true,
+            decimalScale: 0,
+            allowNegative: false
+          }}
         />
       </div>
-      <div className="flex flex-wrap gap-4">
-        {participants.map(p => (
-          <Checkbox
-            key={p.id}
-            checked={selectedEaters.includes(p.id)}
-            onChange={e => {
-              if (e.target.checked) {
-                onEatersChange([...selectedEaters, p.id]);
-              } else {
-                onEatersChange(selectedEaters.filter(id => id !== p.id));
-              }
-            }}
-          >
-            {p.name}
-          </Checkbox>
-        ))}
+      <div>
+        <div className="text-sm font-medium text-gray-700 mb-2">食べた人：</div>
+        <div className="flex flex-wrap gap-4">
+          {participants.map(p => (
+            <Checkbox
+              key={p.id}
+              checked={selectedEaters.includes(p.id)}
+              onChange={e => {
+                if (e.target.checked) {
+                  onEatersChange([...selectedEaters, p.id]);
+                } else {
+                  onEatersChange(selectedEaters.filter(id => id !== p.id));
+                }
+              }}
+            >
+              {p.name}
+            </Checkbox>
+          ))}
+        </div>
       </div>
-
-      <Calculator
-        isOpen={isCalculatorOpen}
-        onClose={handleCalculatorClose}
-        onCalculate={handleCalculatorResult}
-        initialValue={dishPrice}
-        initialDishName={dishName}
-        onDishNameChange={onDishNameChange}
-      />
     </div>
   );
 }; 

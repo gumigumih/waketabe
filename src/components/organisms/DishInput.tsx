@@ -18,15 +18,43 @@ export const DishInput = ({ participants, onComplete, onBack, initialDishes = []
   const [selectedEaters, setSelectedEaters] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingDish, setEditingDish] = useState<{ name: string; price: string; eaters: string[] }>({ name: '', price: '', eaters: [] });
+  const [error, setError] = useState<string>('');
 
   const resetInput = () => {
     setDishName('');
     setDishPrice('');
     setSelectedEaters([]);
+    setError('');
   };
 
   const handleAdd = () => {
-    if (!dishName.trim() || !dishPrice.trim() || selectedEaters.length === 0) return;
+    // エラーメッセージをクリア
+    setError('');
+    
+    // バリデーションチェック
+    if (!dishName.trim()) {
+      setError('料理名を入力してください');
+      return;
+    }
+    
+    if (!dishPrice.trim()) {
+      setError('金額を入力してください');
+      return;
+    }
+    
+    if (selectedEaters.length === 0) {
+      setError('食べた人を選択してください');
+      return;
+    }
+    
+    // 金額の数値チェック
+    const price = parseFloat(dishPrice.replace(/[^\d.-]/g, ''));
+    if (isNaN(price) || price <= 0) {
+      setError('有効な金額を入力してください');
+      return;
+    }
+    
+    // 料理を追加
     setDishes([
       ...dishes,
       { id: crypto.randomUUID(), name: dishName.trim(), price: dishPrice.trim(), eaters: [...selectedEaters] },
@@ -91,14 +119,28 @@ export const DishInput = ({ participants, onComplete, onBack, initialDishes = []
             onDishPriceChange={setDishPrice}
             onEatersChange={setSelectedEaters}
           />
+          
+          {/* エラーメッセージ表示 */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+              <div className="flex items-center">
+                <span className="text-red-500 mr-2">⚠️</span>
+                {error}
+              </div>
+            </div>
+          )}
+          
           <Button type="submit" className="w-full">
             追加
           </Button>
         </form>
-        <ul className="space-y-2">
-          {dishes.map(d => (
-            <li key={d.id}>
+        {/* 料理リスト */}
+        {dishes.length > 0 ? (
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">追加された料理</h3>
+            {dishes.map(d => (
               <DishRow
+                key={d.id}
                 dish={d}
                 participants={participants}
                 isEditing={editingId === d.id}
@@ -109,9 +151,15 @@ export const DishInput = ({ participants, onComplete, onBack, initialDishes = []
                 onEditSave={() => handleEditSave(d.id)}
                 onEditCancel={handleEditCancel}
               />
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            <div className="text-4xl mb-2">🍽️</div>
+            <p>まだ料理が追加されていません</p>
+            <p className="text-sm">上記のフォームから料理を追加してください</p>
+          </div>
+        )}
       </div>
       {onComplete && (
         <Button

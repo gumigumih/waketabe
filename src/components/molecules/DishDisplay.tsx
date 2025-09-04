@@ -13,9 +13,12 @@ export const DishDisplay = ({ dish, participants }: DishDisplayProps) => {
 
   return (
     <div className="flex-1">
-      <div className="font-medium">{dish.name}</div>
+      <div className="flex items-center gap-4 mb-2">
+        <div className="font-medium text-lg">{dish.name}</div>
+        <div className="text-lg font-semibold text-blue-600">¥{dish.price}</div>
+      </div>
       <div className="text-sm text-gray-600">
-        ¥{dish.price} - {eaterNames}
+        食べた人: {eaterNames}
       </div>
     </div>
   );
