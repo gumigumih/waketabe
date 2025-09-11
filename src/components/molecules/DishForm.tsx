@@ -1,6 +1,6 @@
 import { TextInput } from '../atoms/TextInput';
 import { Checkbox } from '../atoms/Checkbox';
-import { CalculatorInputForm } from '@gumigumih/react-calculator-input-form';
+import { AmountInput } from '../atoms/AmountInput';
 import type { Participant } from '../../domain/entities';
 
 interface DishFormProps {
@@ -34,20 +34,12 @@ export const DishForm = ({
           value={dishName}
           onChange={e => onDishNameChange(e.target.value)}
         />
-        <CalculatorInputForm
+        <AmountInput
           value={dishPrice}
           onChange={onDishPriceChange}
           title={dishName ? `${dishName}の金額を入力` : '料理の金額を入力'}
           className="w-32 cursor-pointer bg-white rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
           placeholder="金額"
-          enableTaxCalculation={true}
-          decimalPlaces={0}
-          numberFormatOptions={{
-            prefix: "¥",
-            thousandSeparator: true,
-            decimalScale: 0,
-            allowNegative: false
-          }}
         />
       </div>
       <div>

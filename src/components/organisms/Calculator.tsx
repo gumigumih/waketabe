@@ -1,4 +1,4 @@
-import { CalculatorInputForm } from '@gumigumih/react-calculator-input-form';
+import { AmountInput } from '../atoms/AmountInput';
 
 interface CalculatorProps {
   isOpen: boolean;
@@ -55,21 +55,13 @@ export const Calculator = ({
         
         {/* CalculatorInputForm Component */}
         <div className="px-4 pb-4">
-          <CalculatorInputForm
+          <AmountInput
             value={initialValue}
             onChange={handleCalculate}
             title={dishName ? `${dishName}の金額を入力` : '料理の金額を入力'}
             description="電卓で簡単計算！税込・税抜や割り勘計算にも対応"
             className="w-full cursor-pointer bg-white rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-base"
             placeholder="金額を入力"
-            enableTaxCalculation={true}
-            decimalPlaces={0}
-            numberFormatOptions={{
-              prefix: "¥",
-              thousandSeparator: true,
-              decimalScale: 0,
-              allowNegative: false
-            }}
           />
         </div>
       </div>
